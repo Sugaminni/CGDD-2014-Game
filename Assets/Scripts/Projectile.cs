@@ -3,29 +3,33 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [Header("Projectile Settings")]
-    public float speed = 20f;       // how fast the bullet moves
-    public float lifeTime = 3f;     // how long before despawn
-    public int damage = 1;          // how much damage to deal
+    public float speed = 20f;
+    public float lifeTime = 3f;
+    public int damage = 1;
 
-    private Rigidbody rb;
+    Rigidbody rb;
 
-    void Start()
+    void Awake() { rb = GetComponent<Rigidbody>(); }
+
+    // Use OnEnable so it works even if pooled/re-enabled
+    void OnEnable()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.linearVelocity = transform.forward * speed;   // shoot forward
-        Destroy(gameObject, lifeTime);             // auto destroy
+        if (rb) rb.linearVelocity = transform.forward * speed;
+        Invoke(nameof(SelfDestruct), lifeTime);
     }
 
-    void OnCollisionEnter(Collision collision)
+    // Handle collision with enemies
+    void OnCollisionEnter(Collision c)
     {
-        // If the object has an enemy health script, damage it
-        EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
-        if (enemy != null)
-        {
-            enemy.TakeDamage(damage);
-        }
+        var enemy = c.collider.GetComponentInParent<EnemyHealth>();
+        if (enemy) enemy.TakeDamage(damage);
+        SelfDestruct();
+    }
 
-        // destroy projectile on impact
+    // Destroys the projectile
+    void SelfDestruct()
+    {
+        CancelInvoke();
         Destroy(gameObject);
     }
 }
