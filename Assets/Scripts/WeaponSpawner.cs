@@ -1,3 +1,6 @@
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;   // new Input System
+#endif
 using UnityEngine;
 
 public class WeaponSpawner : MonoBehaviour
@@ -19,12 +22,24 @@ public class WeaponSpawner : MonoBehaviour
     {
         if (!firePoint || !projectilePrefab) return;
 
-        bool fireInput = isAutomatic ? Input.GetButton("Fire1") : Input.GetButtonDown("Fire1");
+        bool fireInput = GetFireInput();
         if (fireInput && Time.time >= nextFireTime)
         {
             Fire();
             nextFireTime = Time.time + 1f / Mathf.Max(0.01f, fireRate);
         }
+    }
+
+    bool GetFireInput()
+    {
+#if ENABLE_INPUT_SYSTEM
+        if (Mouse.current == null) return false;
+        return isAutomatic
+            ? Mouse.current.leftButton.isPressed
+            : Mouse.current.leftButton.wasPressedThisFrame;
+#else
+        return isAutomatic ? Input.GetButton("Fire1") : Input.GetButtonDown("Fire1");
+#endif
     }
 
     void Fire()
@@ -44,7 +59,7 @@ public class WeaponSpawner : MonoBehaviour
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.linearVelocity = rot * Vector3.forward * projectileSpeed; // <-- fixed
+                rb.linearVelocity = rot * Vector3.forward * projectileSpeed; // launch bullet
             }
         }
     }
