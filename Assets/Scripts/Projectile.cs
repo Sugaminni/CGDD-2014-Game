@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class Projectile : MonoBehaviour
 {
     [Header("Projectile Settings")]
@@ -8,25 +9,42 @@ public class Projectile : MonoBehaviour
     public int damage = 1;
 
     Rigidbody rb;
+    bool hasHit = false;
 
-    void Awake() { rb = GetComponent<Rigidbody>(); }
+    // Initialize the projectile
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.useGravity = false; 
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic; // avoid tunneling
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
 
-    // Use OnEnable so it works even if pooled/re-enabled
     void OnEnable()
     {
-        if (rb) rb.linearVelocity = transform.forward * speed;
+        hasHit = false;
+        if (rb) rb.linearVelocity = transform.forward * speed; 
         Invoke(nameof(SelfDestruct), lifeTime);
     }
 
-    // Handle collision with enemies
+    // Handle collision
     void OnCollisionEnter(Collision c)
     {
+        if (hasHit) return; 
+        hasHit = true;
+
+        Debug.Log("Projectile hit: " + c.collider.name);
+
         var enemy = c.collider.GetComponentInParent<EnemyHealth>();
-        if (enemy) enemy.TakeDamage(damage);
+        if (enemy != null)
+        {
+            enemy.TakeDamage(damage);
+        }
+
         SelfDestruct();
     }
 
-    // Destroys the projectile
+    // Destroy the projectile
     void SelfDestruct()
     {
         CancelInvoke();

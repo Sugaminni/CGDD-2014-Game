@@ -68,6 +68,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 1a6e7f8c6800ee847886ebba6be77d6e, type: 2}
+    - target: {fileID: 4703811004465865410, guid: 5442c593ba4429e41b4718d3931b8978, type: 3}
+      propertyPath: m_Speed
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 6489164618321510937, guid: 5442c593ba4429e41b4718d3931b8978, type: 3}
       propertyPath: m_Name
       value: Enemy_Tank

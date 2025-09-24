@@ -1,45 +1,37 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyChase : MonoBehaviour
 {
-    [Header("Target")]
-    public Transform target;             
-
-    [Header("Movement")]
-    public float speed = 2.5f;            
-    public float stopDistance = 1.2f;     // how close before it stops
+    NavMeshAgent agent;
+    Transform target;
 
     // Starts the chase
     void Start()
     {
-        if (!target)
-        {
-            var p = GameObject.FindGameObjectWithTag("Player");
-            if (p) target = p.transform;
-        }
+        agent = GetComponent<NavMeshAgent>();
+        var player = GameObject.FindWithTag("Player");
+        if (player) target = player.transform;
     }
 
-    // Makes the enemy chase the target
+    // Use OnEnable so it works even if pooled/re-enabled
+    void OnEnable()
+    {
+        // If spawned slightly off-mesh, snap onto the closest point
+        if (NavMesh.SamplePosition(transform.position, out var hit, 2f, NavMesh.AllAreas))
+            agent.Warp(hit.position);
+    }
+
+    // Stops the chase
     void Update()
     {
-        if (!target) return;
+        if (!agent) return;
+        if (!agent.isOnNavMesh) { Debug.LogWarning($"{name}: not on NavMesh"); return; }
+        if (!target) { Debug.LogWarning($"{name}: no Player tag found"); return; }
 
-        // move on XZ only
-        Vector3 to = target.position - transform.position;
-        to.y = 0f;
-        float dist = to.magnitude;
-        if (dist <= stopDistance) return;
+        agent.SetDestination(target.position);
 
-        Vector3 dir = to / Mathf.Max(dist, 0.0001f);
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), 10f * Time.deltaTime);
-        transform.position += dir * speed * Time.deltaTime;
-
-        // keep feet on terrain
-        if (Terrain.activeTerrain)
-        {
-            var p = transform.position;
-            p.y = Terrain.activeTerrain.SampleHeight(p);
-            transform.position = p;
-        }
+        // quick visibility into what's happening
+        Debug.Log($"{name} onNav={agent.isOnNavMesh} remDist={agent.remainingDistance:F2} status={agent.pathStatus}");
     }
 }
