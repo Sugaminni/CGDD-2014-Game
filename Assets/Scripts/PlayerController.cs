@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float sprintSpeed = 7.5f;
 
     [Header("Look")]
-    [SerializeField] private float mouseSensitivity = 2.0f;
+    [SerializeField] private float mouseSensitivity = 0.1f;
     [SerializeField] private float minPitch = -75f;
     [SerializeField] private float maxPitch = 75f;
 
@@ -36,8 +36,8 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // Ability to look around
-        float yaw = lookInput.x * mouseSensitivity;
-        float pitchDelta = -lookInput.y * mouseSensitivity;
+        float yaw = lookInput.x * mouseSensitivity * Time.deltaTime * 100f;
+        float pitchDelta = -lookInput.y * mouseSensitivity * Time.deltaTime * 100f;
         transform.Rotate(0f, yaw, 0f, Space.Self);
 
         pitch = Mathf.Clamp(pitch + pitchDelta, minPitch, maxPitch);
@@ -48,13 +48,11 @@ public class PlayerController : MonoBehaviour
         Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
         if (input.sqrMagnitude > 1f) input.Normalize(); // prevent faster diagonal
         Vector3 world = transform.TransformDirection(input);
-        float speed = Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed
-                      ? sprintSpeed : walkSpeed; // supports Both/Old input settings too
+        float speed = Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed ? sprintSpeed : walkSpeed; // supports Both/Old input settings too
 
         // Jumping & Gravity
-        if (cc.isGrounded && yVel < 0f) yVel = -2f;     // small stick-to-ground force
-        if (cc.isGrounded && (Keyboard.current != null ? Keyboard.current.spaceKey.wasPressedThisFrame
-                                                       : Input.GetKeyDown(KeyCode.Space)))
+        if (cc.isGrounded && yVel < 0f) yVel = -2f;    
+        if (cc.isGrounded && (Keyboard.current != null ? Keyboard.current.spaceKey.wasPressedThisFrame : Input.GetKeyDown(KeyCode.Space)))
         {
             yVel = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
