@@ -14,9 +14,9 @@ TagManager:
   - Player
   - Enemy
   - Projectile
-  - 
-  - 
-  - 
+  - TL_Grass
+  - TL_Dirt
+  - TL_Rock
   - 
   - 
   - 
