@@ -165,14 +165,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSpawner
   firePoint: {fileID: 1285412253}
   projectilePrefab: {fileID: 943704588009783303, guid: 5562188d00dfccf408860b3cc8fca9c1, type: 3}
+  ownerCollider: {fileID: 0}
   isAutomatic: 1
   fireRate: 10
   pellets: 1
   spreadAngle: 0
   projectileSpeed: 55
-  autoTest: 0
-  autoTestInterval: 0.5
-  testKey: 102
+  spawnForwardOffset: 0.12
 --- !u!1001 &46781015
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -741,14 +740,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSpawner
   firePoint: {fileID: 1285412253}
   projectilePrefab: {fileID: 943704588009783303, guid: 5562188d00dfccf408860b3cc8fca9c1, type: 3}
+  ownerCollider: {fileID: 0}
   isAutomatic: 0
   fireRate: 3
   pellets: 1
   spreadAngle: 0
   projectileSpeed: 35
-  autoTest: 0
-  autoTestInterval: 0.5
-  testKey: 102
+  spawnForwardOffset: 0.12
 --- !u!1001 &461576383
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2523,14 +2521,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSpawner
   firePoint: {fileID: 1285412253}
   projectilePrefab: {fileID: 943704588009783303, guid: 5562188d00dfccf408860b3cc8fca9c1, type: 3}
+  ownerCollider: {fileID: 0}
   isAutomatic: 0
   fireRate: 1
   pellets: 8
   spreadAngle: 7
   projectileSpeed: 35
-  autoTest: 0
-  autoTestInterval: 0.5
-  testKey: 102
+  spawnForwardOffset: 0.12
 --- !u!1 &2030752541
 GameObject:
   m_ObjectHideFlags: 0
@@ -2757,6 +2754,10 @@ PrefabInstance:
     - target: {fileID: 5525822933089991940, guid: 6dff5e28efc3f1d458f9a421db071cb1, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5525822933089991940, guid: 6dff5e28efc3f1d458f9a421db071cb1, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 7500348140747209073, guid: 6dff5e28efc3f1d458f9a421db071cb1, type: 3}
       propertyPath: m_Layer
