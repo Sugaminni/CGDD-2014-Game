@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class WeaponPickup : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public WeaponBase weaponPrefab;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    // Handles player collision to pick up the weapon
+    void OnTriggerEnter(Collider other){
+        if (!other.CompareTag("Player")) return;
+        var inv = other.GetComponentInChildren<WeaponInventory>(); // attach to player
+        if (inv) {
+            inv.Add(weaponPrefab);
+            Destroy(gameObject);
+        }
     }
 }

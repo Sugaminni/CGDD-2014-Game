@@ -1,16 +1,17 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponInventory : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public Transform weaponMount;  // where weapons are parented
+    public List<WeaponBase> owned = new();
 
-    // Update is called once per frame
-    void Update()
+    // Adds a weapon to the inventory
+    public void Add(WeaponBase prefab)
     {
-        
+        var w = Instantiate(prefab, weaponMount.position, weaponMount.rotation, weaponMount);
+        w.gameObject.SetActive(false);
+        owned.Add(w);
+        WorldRegistry.I?.Unregister(w);
     }
 }
