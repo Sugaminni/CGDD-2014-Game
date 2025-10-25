@@ -42,6 +42,21 @@ public class Projectile : MonoBehaviour
         }
 
         SelfDestruct();
+
+        // support for EnemyBase
+        var eb = c.collider.GetComponentInParent<EnemyBase>();
+        if (eb != null) {
+            eb.TakeDamage(damage);
+            SelfDestruct();
+            return;
+        }
+        // existing fallback:
+        var enemy = c.collider.GetComponentInParent<EnemyHealth>();
+        if (enemy != null) {
+            enemy.TakeDamage(damage);
+            SelfDestruct();
+            return;
+        }
     }
 
     // Destroy the projectile
