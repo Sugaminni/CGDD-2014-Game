@@ -614,7 +614,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 25, y: -25}
+  m_AnchoredPosition: {x: 24.999878, y: -25}
   m_SizeDelta: {x: 300, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &287017336
@@ -2088,15 +2088,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3854350410262227431, guid: 5442c593ba4429e41b4718d3931b8978, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 169.2438
+      value: 170.2
       objectReference: {fileID: 0}
     - target: {fileID: 3854350410262227431, guid: 5442c593ba4429e41b4718d3931b8978, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 23.526
+      value: 20.68
       objectReference: {fileID: 0}
     - target: {fileID: 3854350410262227431, guid: 5442c593ba4429e41b4718d3931b8978, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 109.722
+      value: 100.21
       objectReference: {fileID: 0}
     - target: {fileID: 3854350410262227431, guid: 5442c593ba4429e41b4718d3931b8978, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2146,7 +2146,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6489164618321510937, guid: 5442c593ba4429e41b4718d3931b8978, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1668672760}
+      addedObject: {fileID: 1668672766}
   m_SourcePrefab: {fileID: 100100000, guid: 5442c593ba4429e41b4718d3931b8978, type: 3}
 --- !u!1 &1363865532
 GameObject:
@@ -2706,9 +2706,12 @@ MonoBehaviour:
   maxHealth: 100
   moveSpeed: 3.5
   detectRange: 20
+  loseSightRange: 30
   meleeRange: 1.7
-  meleeDamage: 10
+  touchDamage: 10
   attackCooldown: 0.6
+  deathVfx: {fileID: 0}
+  chaseSpeed: 3.8
 --- !u!1 &1585615349 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8558898677081811161, guid: 0c6060e156e62204a9a2b49711fb07af, type: 3}
@@ -2729,9 +2732,12 @@ MonoBehaviour:
   maxHealth: 250
   moveSpeed: 3.5
   detectRange: 20
+  loseSightRange: 30
   meleeRange: 2.2
-  meleeDamage: 20
+  touchDamage: 10
   attackCooldown: 1.4
+  deathVfx: {fileID: 0}
+  crawlSpeed: 2.2
 --- !u!1 &1596300941
 GameObject:
   m_ObjectHideFlags: 0
@@ -2812,7 +2818,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6489164618321510937, guid: 5442c593ba4429e41b4718d3931b8978, type: 3}
   m_PrefabInstance: {fileID: 1358328899}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1668672760
+--- !u!114 &1668672766
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2825,13 +2831,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  moveSpeed: 2.5
+  moveSpeed: 3.5
   detectRange: 20
+  loseSightRange: 30
+  meleeRange: 1.8
+  touchDamage: 10
+  attackCooldown: 1
+  deathVfx: {fileID: 0}
   preferredRange: 10
   projectilePrefab: {fileID: 943704588009783303, guid: 5562188d00dfccf408860b3cc8fca9c1, type: 3}
   projectileSpeed: 16
+  shotDamage: 7
   fireCooldown: 1.2
-  damage: 7
 --- !u!1001 &1695022368
 PrefabInstance:
   m_ObjectHideFlags: 0

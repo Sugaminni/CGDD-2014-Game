@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3700395593250232647, guid: b929cfbfeb05ee24181084fae0f84b4d, type: 3}
       propertyPath: m_Name
-      value: Enemy_Grunt
+      value: RangedEnemy
       objectReference: {fileID: 0}
     - target: {fileID: 5812578001936469420, guid: b929cfbfeb05ee24181084fae0f84b4d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -76,13 +76,18 @@ PrefabInstance:
       propertyPath: maxHealth
       value: 3
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8090672136939889127, guid: b929cfbfeb05ee24181084fae0f84b4d, type: 3}
+    - {fileID: 1788985320659887955, guid: b929cfbfeb05ee24181084fae0f84b4d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3700395593250232647, guid: b929cfbfeb05ee24181084fae0f84b4d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4703811004465865410}
+    - targetCorrespondingSourceObject: {fileID: 3700395593250232647, guid: b929cfbfeb05ee24181084fae0f84b4d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5047125429293223885}
   m_SourcePrefab: {fileID: 100100000, guid: b929cfbfeb05ee24181084fae0f84b4d, type: 3}
 --- !u!1 &6489164618321510937 stripped
 GameObject:
@@ -111,3 +116,28 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &5047125429293223885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6489164618321510937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0af74f45a93907c41aa8a4916f0e3ddf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  moveSpeed: 3.5
+  detectRange: 20
+  loseSightRange: 30
+  meleeRange: 1.8
+  touchDamage: 10
+  attackCooldown: 1
+  deathVfx: {fileID: 0}
+  preferredRange: 10
+  projectilePrefab: {fileID: 943704588009783303, guid: 5562188d00dfccf408860b3cc8fca9c1, type: 3}
+  projectileSpeed: 16
+  shotDamage: 7
+  fireCooldown: 1.2

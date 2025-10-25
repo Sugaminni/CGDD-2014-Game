@@ -42,13 +42,17 @@ public class RangedEnemy : EnemyBase
         var go = Instantiate(projectilePrefab, muzzle, Quaternion.LookRotation(aim));
 
         if (go.TryGetComponent<Rigidbody>(out var rb))
-            rb.linearVelocity = aim * projectileSpeed;
+        rb.linearVelocity = aim * projectileSpeed;
 
-        var p = go.GetComponent<Projectile>();
-        if (p)
+        // mark as enemy + set owner so the projectile ignores its shooter
+        if (go.TryGetComponent<Projectile>(out var p))
         {
-            p.damage = shotDamage;
-            p.fromEnemy = true; // mark as enemy projectile
+        p.fromEnemy = true;
+        p.damage = shotDamage;
+        p.owner = transform;
+        // set to EnemyProjectile layer
+        int enemyProjLayer = LayerMask.NameToLayer("EnemyProjectile");
+        if (enemyProjLayer != -1) go.layer = enemyProjLayer;
         }
 
         // avoid self-hit
