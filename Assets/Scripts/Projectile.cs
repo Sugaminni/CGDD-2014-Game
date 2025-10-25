@@ -6,46 +6,50 @@ public class Projectile : MonoBehaviour
     [Header("Projectile Settings")]
     public float speed = 20f;
     public float lifeTime = 3f;
-    public int damage = 1;
+    public float damage = 10f;
+
+    [Header("Ownership")]
+    public bool fromEnemy = false; // distinguish player vs enemy projectiles
 
     Rigidbody rb;
     bool hasHit = false;
 
-    // Initialize the projectile
+    // Initialize projectile
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rb.useGravity = false;
 
-        // If not pre-launched, go forward
         if (rb.linearVelocity == Vector3.zero)
-            rb.linearVelocity = transform.forward * speed;
+            rb.linearVelocity = transform.forward * speed; 
 
         Invoke(nameof(SelfDestruct), lifeTime);
     }
 
+    // Handle collision
     void OnCollisionEnter(Collision col)
     {
         if (hasHit) return;
         hasHit = true;
 
-        // Try EnemyBase first
-        var enemyBase = col.collider.GetComponentInParent<EnemyBase>();
-        if (enemyBase != null)
+        if (fromEnemy)
         {
-            enemyBase.TakeDamage(damage);
-            SelfDestruct();
-            return;
+            // Enemy bullet = damage player
+            var ph = col.collider.GetComponentInParent<PlayerHealth>();
+            if (ph) ph.TakeDamage(damage);
         }
-
-        // Fallback to EnemyHealth 
-        var enemy = col.collider.GetComponentInParent<EnemyHealth>();
-        if (enemy != null) enemy.TakeDamage(damage);
+        else
+        {
+            // Player bullet = damage enemy
+            var eb = col.collider.GetComponentInParent<EnemyBase>();
+            if (eb) eb.TakeDamage(damage);
+        }
 
         SelfDestruct();
     }
 
+    // Destroy the projectile
     void SelfDestruct()
     {
         CancelInvoke();

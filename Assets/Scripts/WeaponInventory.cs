@@ -6,6 +6,30 @@ public class WeaponInventory : MonoBehaviour
     public Transform weaponMount;  // where weapons are parented
     public List<WeaponBase> owned = new();
 
+    void Awake()
+    {
+        if (weaponMount == null) weaponMount = transform;
+        RefreshOwned("Awake");
+    }
+
+    // Refresh the list of owned weapons
+    public void RefreshOwned(string from = "")
+    {
+        owned.Clear();
+        var root = weaponMount ? weaponMount : transform;
+        owned.AddRange(root.GetComponentsInChildren<WeaponBase>(true)); // include inactive
+        Debug.Log($"[WeaponInventory] {from}: found {owned.Count} weapon(s) under '{root.name}'.");
+    }
+
+    // Registers a weapon into the inventory
+    public WeaponBase RegisterWeapon(WeaponBase w)
+    {
+        if (!owned.Contains(w)) owned.Add(w);
+        w.transform.SetParent(weaponMount, false);
+        w.gameObject.SetActive(false);   // don't show until equipped
+        return w;
+    }
+
     // Adds a weapon to the inventory
     public void Add(WeaponBase prefab)
     {

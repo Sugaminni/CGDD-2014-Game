@@ -7,6 +7,14 @@ public class WeaponSwitcher : MonoBehaviour
     public CrosshairUI crosshair;
     int index;
 
+    public void EquipFirstAndRefresh()
+    {
+    // makes sure inventory is up to date
+    inventory?.RefreshOwned("Pickup");
+    EquipIndex(0);
+    RefreshHUD();
+    }
+
     // Initialize the weapon switcher
     void Start()
     {
