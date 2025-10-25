@@ -15,51 +15,37 @@ public class Projectile : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.useGravity = false; 
-        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic; // avoid tunneling
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
-    }
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.useGravity = false;
 
-    void OnEnable()
-    {
-        hasHit = false;
-        if (rb) rb.linearVelocity = transform.forward * speed; 
+        // If not pre-launched, go forward
+        if (rb.linearVelocity == Vector3.zero)
+            rb.linearVelocity = transform.forward * speed;
+
         Invoke(nameof(SelfDestruct), lifeTime);
     }
 
-    // Handle collision
-    void OnCollisionEnter(Collision c)
+    void OnCollisionEnter(Collision col)
     {
-        if (hasHit) return; 
+        if (hasHit) return;
         hasHit = true;
 
-        Debug.Log("Projectile hit: " + c.collider.name);
-
-        var enemy = c.collider.GetComponentInParent<EnemyHealth>();
-        if (enemy != null)
+        // Try EnemyBase first
+        var enemyBase = col.collider.GetComponentInParent<EnemyBase>();
+        if (enemyBase != null)
         {
-            enemy.TakeDamage(damage);
+            enemyBase.TakeDamage(damage);
+            SelfDestruct();
+            return;
         }
+
+        // Fallback to EnemyHealth 
+        var enemy = col.collider.GetComponentInParent<EnemyHealth>();
+        if (enemy != null) enemy.TakeDamage(damage);
 
         SelfDestruct();
-
-        // support for EnemyBase
-        var eb = c.collider.GetComponentInParent<EnemyBase>();
-        if (eb != null) {
-            eb.TakeDamage(damage);
-            SelfDestruct();
-            return;
-        }
-        // existing fallback:
-        var enemy = c.collider.GetComponentInParent<EnemyHealth>();
-        if (enemy != null) {
-            enemy.TakeDamage(damage);
-            SelfDestruct();
-            return;
-        }
     }
 
-    // Destroy the projectile
     void SelfDestruct()
     {
         CancelInvoke();

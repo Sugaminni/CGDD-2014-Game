@@ -12,33 +12,48 @@ public abstract class EnemyBase : MonoBehaviour
     protected Transform player;
     protected NavMeshAgent agent;
 
-    // Initializes enemy properties
-    protected virtual void Awake() {
+    // Initialize the enemy
+    protected virtual void Awake()
+    {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         agent = GetComponent<NavMeshAgent>();
         if (agent) agent.speed = moveSpeed;
         health = maxHealth;
+        WorldRegistry.I?.Register(this);
     }
 
-    // Handles enemy behavior each frame
+    // Cleanup on destroy
+    protected virtual void OnDestroy()
+    {
+        WorldRegistry.I?.Unregister(this);
+    }
+
+    // If player is in range, move and attack
     protected virtual void Update()
     {
         if (!player) return;
-        Move();
-        if (Vector3.Distance(transform.position, player.position) <= detectRange)
+
+        float d = Vector3.Distance(transform.position, player.position);
+        if (d <= detectRange)
         {
+            Move();
             Attack();
+        }
+        else
+        {
+            if (agent) agent.ResetPath();
         }
     }
 
-    // Applies damage to the enemy
-    public void TakeDamage(float dmg)
+    // Apply damage to the enemy
+    public virtual void TakeDamage(int dmg)
     {
+        if (dmg <= 0) return;
         health -= dmg;
         if (health <= 0f) OnDeath();
     }
 
-    // Handles enemy death
+    // Handle enemy death
     protected virtual void OnDeath()
     {
         Destroy(gameObject);

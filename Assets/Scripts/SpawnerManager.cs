@@ -11,11 +11,11 @@ public class SpawnerManager : MonoBehaviour
     public int pickupsPerType = 1;
 
     [Header("Bounds")]
-    public Vector2 xzMin = new(-20,-20);
-    public Vector2 xzMax = new( 20, 20);
+    public Vector2 xzMin = new(-20, -20);
+    public Vector2 xzMax = new( 20,  20);
     public float ySpawn = 0f;
 
-    // Spawns enemies and pickups at start
+    // Initialize spawners
     void Start()
     {
         foreach (var e in enemyTypes)
@@ -27,7 +27,7 @@ public class SpawnerManager : MonoBehaviour
                 Instantiate(w, RandPos(), Quaternion.identity);
     }
 
-    // Generates a random position within dbounds
+    // Generate a random position within bounds
     Vector3 RandPos() =>
         new Vector3(Random.Range(xzMin.x, xzMax.x), ySpawn, Random.Range(xzMin.y, xzMax.y));
 }

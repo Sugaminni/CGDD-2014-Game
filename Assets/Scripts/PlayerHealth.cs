@@ -8,32 +8,31 @@ public class PlayerHealth : MonoBehaviour
     public float maxHP = 100f;
     public float currentHP;
 
-
     public static event Action<float> OnHealthRatioChanged;
     public static event Action OnPlayerDied;
 
-    // Initializes health
-    void Awake() {
+    // Initialize player health
+    void Awake()
+    {
         currentHP = maxHP;
         OnHealthRatioChanged?.Invoke(1f);
     }
 
-    // Applies damage to the player
-    public void TakeDamage(float dmg)
+    // Apply damage to the player
+    public void TakeDamage(float amount)
     {
-        if (dmg <= 0f || currentHP <= 0f) return;
-        currentHP = Mathf.Max(0f, currentHP - dmg);
+        if (amount <= 0f || currentHP <= 0f) return;
+        currentHP = Mathf.Max(0f, currentHP - amount);
         OnHealthRatioChanged?.Invoke(currentHP / maxHP);
 
         if (currentHP <= 0f)
         {
             OnPlayerDied?.Invoke();
-            // Simple game over: reload scene 
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 
-    // Heals the player
+    // Heal the player
     public void Heal(float amount)
     {
         if (amount <= 0f || currentHP <= 0f) return;
