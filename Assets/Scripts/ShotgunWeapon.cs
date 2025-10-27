@@ -2,34 +2,19 @@ using UnityEngine;
 
 public class ShotgunWeapon : WeaponBase
 {
-    public GameObject projectilePrefab;
-    public float projectileSpeed = 42f;
-    public float damagePerPellet = 6f;
-    public int pellets = 6;
-    public float spreadAngle = 6f; // degrees
+    [Header("Shotgun")]
+    [Min(1)] public int pellets = 10;   // pellets per shot
+    [Range(0f, 15f)] public float spread = 7f; // degrees cone
+    public int pelletDamage = 8;        // damage applied per pellet
 
-    void Reset(){ displayName = "Shotgun"; fireRate = 1.2f; }
-
-    // Fires multiple projectiles with spread from the shotgun
     public override void Use()
     {
-        if (!CanFire() || !firePoint || !projectilePrefab) return;
+        if (!CanFire()) return;
 
-        for (int i = 0; i < pellets; i++)
-        {
-            Quaternion spread = Quaternion.Euler(
-                Random.Range(-spreadAngle, spreadAngle),
-                Random.Range(-spreadAngle, spreadAngle),
-                0f);
-
-            var go = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation * spread);
-            if (go.TryGetComponent<Rigidbody>(out var rb))
-                rb.linearVelocity = (firePoint.rotation * spread) * Vector3.forward * projectileSpeed;
-
-            var proj = go.GetComponent<Projectile>();
-            if (proj) proj.damage = Mathf.RoundToInt(damagePerPellet);
-        }
-
-        MarkFired();
+        // Temporarily override base.damage so each pellet uses pelletDamage
+        int old = damage;
+        damage = pelletDamage;
+        SpawnFromCameraForward(pellets, spread);  
+        damage = old;
     }
 }

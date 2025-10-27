@@ -12,6 +12,14 @@ public class WeaponInventory : MonoBehaviour
         RefreshOwned("Awake");
     }
 
+    public void AddAndSelect(WeaponBase w, WeaponSwitcher switcher)
+    {
+    if (w == null) return;
+    owned.Add(w);
+    if (switcher != null)
+        switcher.EquipIndex(owned.Count - 1); // select the newly added weapon
+    }
+
     // Refresh the list of owned weapons
     public void RefreshOwned(string from = "")
     {

@@ -3,80 +3,51 @@ using UnityEngine;
 public class WeaponSwitcher : MonoBehaviour
 {
     public WeaponInventory inventory;
-    public WeaponHUD hud;
     public CrosshairUI crosshair;
     int index;
 
-    public void EquipFirstAndRefresh()
+    void Awake()
     {
-    // makes sure inventory is up to date
-    inventory?.RefreshOwned("Pickup");
-    EquipIndex(0);
-    RefreshHUD();
+        if (!inventory) inventory = GetComponentInChildren<WeaponInventory>(true);
     }
 
-    // Initialize the weapon switcher
+    // Initialize starting weapon
     void Start()
     {
-        if (!inventory) inventory = GetComponentInChildren<WeaponInventory>();
-        EquipIndex(0);
-        RefreshHUD();
+        inventory?.RefreshOwned("Switcher.Start");
+        if (inventory && inventory.owned.Count > 0) EquipIndex(0);
     }
 
-    void Update()
+    public void EquipNext() => EquipIndex(index + 1);
+    public void EquipPrev() => EquipIndex(index - 1);
+
+    // Equip weapon by inventory index
+    public void EquipIndex(int idx)
     {
-        // Number keys (1..N)
-        for (int i = 0; i < inventory.owned.Count && i < 9; i++)
+        if (inventory == null || inventory.owned.Count == 0) return;
+
+        var old = Current(); if (old != null) old.OnFired = null;
+
+        if (idx < 0) idx = inventory.owned.Count - 1;
+        if (idx >= inventory.owned.Count) idx = 0;
+        index = idx;
+
+        for (int i = 0; i < inventory.owned.Count; i++)
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1 + i))
-            {
-                EquipIndex(i);
-                RefreshHUD();
-            }
+            var w = inventory.owned[i];
+            if (w) w.gameObject.SetActive(i == index);
         }
 
-        // Scroll wheel cycle
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (Mathf.Abs(scroll) > 0.01f && inventory.owned.Count > 0)
-        {
-            int dir = scroll > 0 ? -1 : 1; // up = previous
-            index = (index + dir + inventory.owned.Count) % inventory.owned.Count;
-            EquipIndex(index);
-            RefreshHUD();
-        }
+        var wnew = Current();
+        if (wnew != null && crosshair != null) wnew.OnFired += () => crosshair.Kick();
 
-        // Fire (Mouse0)
-        if (Input.GetMouseButton(0))
-        {
-            var w = Current();
-            if (w != null)
-            {
-                int shotsBefore = Mathf.FloorToInt(Time.time * 1000f); 
-                w.Use();
-                // Kick crosshair when a shot happens (recoil)
-                if (crosshair) crosshair.Kick();
-            }
-        }
+        Debug.Log($"[Switcher] Equipped {index}: {wnew?.name}");
     }
 
-    // Get the currently equipped weapon
-    WeaponBase Current() =>
-        (inventory && inventory.owned.Count > 0 && index >= 0 && index < inventory.owned.Count)
-        ? inventory.owned[index] : null;
-
-    void EquipIndex(int i)
+    // Get currently equipped weapon
+    public WeaponBase Current()
     {
-        if (!inventory || inventory.owned.Count == 0) return;
-        i = Mathf.Clamp(i, 0, inventory.owned.Count - 1);
-        index = i;
-        for (int k = 0; k < inventory.owned.Count; k++)
-            inventory.owned[k].gameObject.SetActive(k == index);
-
-        inventory.owned[index].OnEquip();
-    }
-
-    void RefreshHUD()
-    {
-        hud?.SetWeapon(Current() ? Current().displayName : "None");
+        if (inventory == null || inventory.owned.Count == 0) return null;
+        return inventory.owned[Mathf.Clamp(index, 0, inventory.owned.Count - 1)];
     }
 }

@@ -35,7 +35,7 @@ public abstract class EnemyBase : MonoBehaviour
         WorldRegistry.I?.Register(this);
     }
 
-    protected virtual void OnEnable()  { WorldRegistry.I?.Register(this); }
+    protected virtual void OnEnable() { WorldRegistry.I?.Register(this); }
     protected virtual void OnDisable() { WorldRegistry.I?.Unregister(this); }
     protected virtual void OnDestroy() { WorldRegistry.I?.Unregister(this); }
 
@@ -90,6 +90,7 @@ public abstract class EnemyBase : MonoBehaviour
     public abstract void Move();
     public abstract void Attack();
 
+    // Debug gizmos to visualize ranges
 #if UNITY_EDITOR
     void OnDrawGizmosSelected()
     {

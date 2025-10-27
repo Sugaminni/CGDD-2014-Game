@@ -2,24 +2,13 @@ using UnityEngine;
 
 public class RifleWeapon : WeaponBase
 {
-    public GameObject projectilePrefab;
-    public float projectileSpeed = 55f;
-    public float damage = 12f;
+    [Range(0f, 5f)]
+    public float spread = 0.75f;
 
-    void Reset(){ displayName = "Rifle"; fireRate = 8f; }
-
-    // Fires a projectile from the rifle
+    // Implements firing logic for the rifle weapon
     public override void Use()
     {
-        if (!CanFire() || !firePoint || !projectilePrefab) return;
-
-        var go = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
-        if (go.TryGetComponent<Rigidbody>(out var rb))
-            rb.linearVelocity = firePoint.forward * projectileSpeed;
-
-        var proj = go.GetComponent<Projectile>();
-        if (proj) proj.damage = Mathf.RoundToInt(damage);
-
-        MarkFired();
+        if (!CanFire()) return;
+        SpawnFromCameraForward(pellets: 1, spreadDeg: spread);
     }
 }

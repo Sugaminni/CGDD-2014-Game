@@ -30,31 +30,33 @@ public class Projectile : MonoBehaviour
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-        rb.useGravity = false;
+    rb = GetComponent<Rigidbody>();
+    rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+    rb.useGravity = false;
 
-        if (rb.linearVelocity == Vector3.zero)
-            rb.linearVelocity = transform.forward * speed;
+    // Only set if spawner didn't
+    if (rb.linearVelocity == Vector3.zero)
+        rb.linearVelocity = transform.forward * speed;
 
-        if (owner)
+    if (owner)
+    {
+        var myCol = GetComponent<Collider>();
+        foreach (var c in owner.GetComponentsInChildren<Collider>())
         {
-            var myCol = GetComponent<Collider>();
-            foreach (var c in owner.GetComponentsInChildren<Collider>())
-            {
-                if (!c || !myCol) continue;
-                Physics.IgnoreCollision(myCol, c, true);
-                ignoredOwnerCols.Add(c);
-            }
+            if (!c || !myCol) continue;
+            Physics.IgnoreCollision(myCol, c, true);
+            ignoredOwnerCols.Add(c);
         }
-
-        ConfigureTeamHitMask();
-
-        spawnTime = Time.time;
-        lastPos = transform.position;
-        Invoke(nameof(SelfDestruct), lifeTime);
     }
 
+    // Configure the hit mask based on ownership and layers
+        ConfigureTeamHitMask();
+    spawnTime = Time.time;
+    lastPos = transform.position;
+    Invoke(nameof(SelfDestruct), lifeTime);
+    }
+
+    // Makes sure projectile hits are detected accurately
     void FixedUpdate()
     {
         if (hasHit) return;
@@ -83,27 +85,29 @@ public class Projectile : MonoBehaviour
         lastPos = currentPos;
     }
 
+    // Configures the hit mask to prevent friendly fire and self-collisions
     void ConfigureTeamHitMask()
     {
         int playerLayer = LayerMask.NameToLayer("Player");
-        int enemyLayer  = LayerMask.NameToLayer("Enemy");
-        int playerProj  = LayerMask.NameToLayer("PlayerProjectile");
-        int enemyProj   = LayerMask.NameToLayer("EnemyProjectile");
+        int enemyLayer = LayerMask.NameToLayer("Enemy");
+        int playerProj = LayerMask.NameToLayer("PlayerProjectile");
+        int enemyProj = LayerMask.NameToLayer("EnemyProjectile");
 
         if (fromEnemy)
         {
-            if (enemyLayer  != -1) hitMask &= ~(1 << enemyLayer);
-            if (enemyProj   != -1) hitMask &= ~(1 << enemyProj);
+            if (enemyLayer != -1) hitMask &= ~(1 << enemyLayer);
+            if (enemyProj != -1) hitMask &= ~(1 << enemyProj);
         }
         else
         {
             if (playerLayer != -1) hitMask &= ~(1 << playerLayer);
-            if (playerProj  != -1) hitMask &= ~(1 << playerProj);
+            if (playerProj != -1) hitMask &= ~(1 << playerProj);
         }
 
         if (owner) hitMask &= ~(1 << owner.gameObject.layer);
     }
 
+    // Checks if the collider belongs to the owner or is in the ignored list
     bool IsOwnerCollider(Collider c)
     {
         if (!owner || !c) return false;
@@ -111,6 +115,7 @@ public class Projectile : MonoBehaviour
         return c.transform == owner || c.transform.IsChildOf(owner);
     }
 
+    // Attempts to apply damage to the hit component if applicable
     void TryApplyDamage(Component hit)
     {
         if (hasHit || !Armed) return;
