@@ -1,42 +1,59 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class WeaponHUD : MonoBehaviour
 {
-    [Header("Refs")]
+    [Header("UI")]
     public TextMeshProUGUI weaponText;
     public TextMeshProUGUI controlsText;
     public Image healthFill;
 
-    // Initialize health listener
-    void OnEnable()
-    {
-        PlayerHealth.OnHealthRatioChanged += UpdateHealth;
-    }
+    [Header("Auto-find (optional)")]
+    public WeaponSwitcher switcher;
+    public PlayerHealth playerHealth;
 
-    void OnDisable()
-    {
-        PlayerHealth.OnHealthRatioChanged -= UpdateHealth;
-    }
+    string lastWeaponName;
 
-    // Initialize the HUD
-    void Start()
+    // Initialize references
+    void Awake()
     {
+        if (!switcher)     switcher     = FindFirstObjectByType<WeaponSwitcher>();
+        if (!playerHealth) playerHealth = FindFirstObjectByType<PlayerHealth>();
+
         if (controlsText)
-            controlsText.text = "1-3: Switch weapon  |  Mouse: Look  |  LMB: Fire  |  Wheel: Cycle  |  Shift: Sprint";
-        SetWeapon("None");
-        UpdateHealth(1f);
+        {
+            controlsText.text = "WASD Move  |  Mouse Look  |  Mouse1 Fire\nQ/E or Wheel Switch  |  1–3 Equip  |  Walk into pickups";
+        }
     }
 
-    // Set the displayed weapon name
-    public void SetWeapon(string name)
+    // Makes sure HUD is up to date
+    void Update()
     {
-        if (weaponText) weaponText.text = $"Weapon: {name}";
+        // Health
+        if (playerHealth && healthFill)
+        {
+            float pct = Mathf.InverseLerp(0f, playerHealth.maxHealth, playerHealth.currentHealth);
+            healthFill.fillAmount = pct;
+        }
+
+        // Weapon name 
+        if (switcher && weaponText)
+        {
+            var w = switcher.Current();
+            string display = w ? CleanName(w.name) : "None";
+            if (display != lastWeaponName)
+            {
+                weaponText.text = "Weapon: " + display;
+                lastWeaponName = display;
+            }
+        }
     }
 
-    void UpdateHealth(float ratio01)
+    // Cleans up weapon name for display
+    static string CleanName(string raw)
     {
-        if (healthFill) healthFill.fillAmount = Mathf.Clamp01(ratio01);
+        if (string.IsNullOrEmpty(raw)) return "None";
+        return raw.Replace("(Clone)", "").Trim();
     }
 }

@@ -1,42 +1,52 @@
-using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using System;
 
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Health")]
-    public float maxHP = 100f;
-    public float currentHP;
+    public float maxHealth = 100f;    
+    public float currentHealth;       
 
-    public static event Action<float> OnHealthRatioChanged;
-    public static event Action OnPlayerDied;
+    [Header("Optional")]
+    public bool destroyOnDeath = false;
 
-    // Initialize player health
+    public Action<float, float> OnHealthChanged;
+    public Action OnDied;
+
+    // Properties to access health values
+    public float currentHP { get => currentHealth; set { currentHealth = value; Notify(); } }
+    public float maxHP     { get => maxHealth;     set { maxHealth     = value; Notify(); } }
+
+    // Initialize health
     void Awake()
     {
-        currentHP = maxHP;
-        OnHealthRatioChanged?.Invoke(1f);
+        if (currentHealth <= 0f) currentHealth = maxHealth;
+        Notify();
     }
 
-    // Apply damage to the player
+    // Handle taking damage
     public void TakeDamage(float amount)
     {
-        if (amount <= 0f || currentHP <= 0f) return;
-        currentHP = Mathf.Max(0f, currentHP - amount);
-        OnHealthRatioChanged?.Invoke(currentHP / maxHP);
-
-        if (currentHP <= 0f)
-        {
-            OnPlayerDied?.Invoke();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
+        if (amount <= 0f || currentHealth <= 0f) return;
+        currentHealth = Mathf.Max(0f, currentHealth - amount);
+        Notify();
+        if (currentHealth <= 0f) Die();
     }
 
-    // Heal the player
+    // Handle healing
     public void Heal(float amount)
     {
-        if (amount <= 0f || currentHP <= 0f) return;
-        currentHP = Mathf.Min(maxHP, currentHP + amount);
-        OnHealthRatioChanged?.Invoke(currentHP / maxHP);
+        if (amount <= 0f || currentHealth <= 0f) return;
+        currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+        Notify();
     }
+
+    // Handle death
+    void Die()
+    {
+        OnDied?.Invoke();
+        if (destroyOnDeath) Destroy(gameObject);
+    }
+
+    void Notify() => OnHealthChanged?.Invoke(currentHealth, maxHealth);
 }
