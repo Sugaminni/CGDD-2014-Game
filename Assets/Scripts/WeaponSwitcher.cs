@@ -41,7 +41,6 @@ public class WeaponSwitcher : MonoBehaviour
         var wnew = Current();
         if (wnew != null && crosshair != null) wnew.OnFired += () => crosshair.Kick();
 
-        Debug.Log($"[Switcher] Equipped {index}: {wnew?.name}");
     }
 
     // Get currently equipped weapon

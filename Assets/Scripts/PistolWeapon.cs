@@ -6,7 +6,6 @@ public class PistolWeapon : WeaponBase
     public override void Use()
     {
         if (!CanFire()) return;
-        Debug.Log("Pistol fired!");
         SpawnFromCameraForward(pellets: 1, spreadDeg: 0f);
     }
 }
